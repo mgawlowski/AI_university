@@ -1,0 +1,14 @@
+
+POPULATION_SIZE		200
+FITNESS_EVALS		30000
+
+SELECTION_TYPE		3		(0-tournament; 1-roulette; 2-optimized roulette; 3-ranking)
+TOURNAMENT_SIZE		10
+
+CROSS_PROB			0.8
+MUTAT_PROB			0.02
+
+USE_SEED			false
+SEED				53252463
+
+USE_CACHE			true
