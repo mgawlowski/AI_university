@@ -8,6 +8,7 @@ public class Main {
         GeneticAlgorithm ga = new GeneticAlgorithm();
         RandomSearch rs = new RandomSearch();
 
+        // had20, Kra32
 
 //        ga.run("had20.dat");
         ga.run("Kra32.dat");
@@ -16,7 +17,6 @@ public class Main {
 //            ga.run("Kra32.dat");
 //        }
 
-        // neos, had20, chr12a, chr25a, esc64a, lipa60b, lipa70a, Kra32
 
 //        rs.run("had20.dat", 30000, true, true);
 
