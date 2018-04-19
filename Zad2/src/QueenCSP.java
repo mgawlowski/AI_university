@@ -1,20 +1,101 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class QueenCSP {
 
-    //todo backtracking, forwardchecking
-    private List<Integer> queenPosList = new ArrayList<>();
-    private int boardSize = 0;
+    private ProblemObject problemObj;
+    private int boardSize;
+    private RandomGenerator rnd = new RandomGenerator();
     private int iterations = 0;
+    private int reverts = 0;
 
     public QueenCSP() {
 
     }
 
+    public void run(int boardSize) {
+        this.boardSize = boardSize;
+        problemObj = new ProblemObject();
+        populateProblemObject();
+        iterations = 0;
+        reverts = 0;
+        forwardChecking();
+        printSolution();
+    }
+
+    private void populateProblemObject() {
+        for (int i = 1; i <= boardSize; i++) {
+            List<Integer> domain = new ArrayList<>();
+            for (int j = 1; j <= boardSize; j++) {
+                domain.add(j);
+            }
+            problemObj.addVariable("col" + i, domain);
+        }
+    }
+
+    private void forwardChecking() {
+        while (!problemObj.getVariablesIndToGo().isEmpty()) {
+            iterations++;
+            int chosenIndex = getRandomVariableIndex();
+            int chosenValue = getRandomValue(chosenIndex);
+            problemObj.chooseValue(chosenIndex, chosenValue);
+
+            int difference = 1;
+            for (int i = chosenIndex + 1; i < problemObj.getVariablesNumber(); i++) {
+                problemObj.deleteValue(i, chosenValue - difference);
+                problemObj.deleteValue(i, chosenValue);
+                problemObj.deleteValue(i, chosenValue + difference);
+                difference++;
+            }
+            difference = 1;
+            for (int i = chosenIndex - 1; i >= 0; i--) {
+                problemObj.deleteValue(i, chosenValue - difference);
+                problemObj.deleteValue(i, chosenValue);
+                problemObj.deleteValue(i, chosenValue + difference);
+                difference++;
+            }
+
+            while (problemObj.isAnyDomainEmpty()) {
+                problemObj.revert();
+                reverts++;
+            }
+        }
+    }
+
+    private int getRandomVariableIndex() {
+        Set<Integer> varsIndexes = problemObj.getVariablesIndToGo();
+        int draw = rnd.random(varsIndexes.size());
+        int i = 0;
+        for (Object o : varsIndexes) {
+            if (i == draw)
+                return (int) o;
+            i++;
+        }
+        return -1;
+    }
+
+    private int getRandomValue(int chosenIndex) {
+        List<Integer> values = problemObj.getDomain(chosenIndex);
+        return values.get(rnd.random(values.size()));
+    }
+
+    private void printSolution() {
+        System.out.println();
+        for (int i = 0; i < boardSize; i++) {
+            for (int j = 0; j < boardSize; j++) {
+                if (problemObj.getChosenValue(j) == i + 1) {
+                    System.out.print("X   ");
+                } else {
+                    System.out.print(".   ");
+                }
+            }
+            System.out.println();
+            System.out.println();
+        }
+        System.out.println("Iterations: " + iterations + " Reverts: " + reverts);
+    }
+
     public void runRandom(int boardSize) {
-        queenPosList.clear();
+        List<Integer> queenPosList = new ArrayList<>();
         this.boardSize = boardSize;
         for (int i = 0; i < boardSize; i++) {
             queenPosList.add(i);
@@ -22,21 +103,17 @@ public class QueenCSP {
 
         iterations = 0;
         do {
-            Collections.shuffle(queenPosList);
+            Collections.shuffle(queenPosList, rnd.getRandomEngine());
             iterations++;
-        } while (!checkIfValid());
+        } while (!checkIfValidRandom(queenPosList));
 
-        printResult();
-    }
-
-    private void printResult(){
         for (int i = 0; i < boardSize; i++) {
             System.out.print(queenPosList.get(i) + ", ");
         }
         System.out.print(" (iterations: " + iterations + ")\n");
     }
 
-    private boolean checkIfValid() {
+    private boolean checkIfValidRandom(List<Integer> queenPosList) {
         int firstQueenPos, secondQueenPos, diagonalDifference;
 
         for (int i = 0; i < boardSize; i++) {
