@@ -53,7 +53,7 @@ public class QueenCSP {
             problemObj.chooseValue(chosenIndex, chosenValue);
 
             int difference = 1;
-            for (int i = chosenIndex + 1; i < problemObj.getVariablesNumber(); i++) {
+            for (int i = chosenIndex + 1; i < boardSize; i++) {
                 problemObj.deleteValue(i, chosenValue - difference);
                 problemObj.deleteValue(i, chosenValue);
                 problemObj.deleteValue(i, chosenValue + difference);
@@ -78,7 +78,13 @@ public class QueenCSP {
 
         while (!problemObj.getVariablesIndToGo().isEmpty()) {
             iterations++;
-            int chosenIndex = getRandomVariableIndex();
+            int chosenIndex;
+            if(heuristic == 1) {
+                chosenIndex = getRandomVariableIndex();
+            }
+            else {
+                chosenIndex = getVariableIndexWithLowestCardinality();
+            }
             int chosenValue = getRandomValue(chosenIndex);
             problemObj.chooseValue(chosenIndex, chosenValue);
 
@@ -94,7 +100,7 @@ public class QueenCSP {
         for (int i = 0; i < boardSize; i++) {
             if(chosenValues.get(i) != null){
                 int difference = 1;
-                for (int j = i + 1; j < problemObj.getVariablesNumber(); j++) {
+                for (int j = i + 1; j < boardSize; j++) {
                     if(chosenValues.get(j) != null){
                         int firstValue = chosenValues.get(i);
                         int secondValue = chosenValues.get(j);

@@ -22,10 +22,6 @@ public class ProblemObject {
     public ProblemObject() {
     }
 
-    public int getVariablesNumber(){
-        return variables.size();
-    }
-
     public void addVariable(String name, List<Integer> domain) {
         variables.add(new Pair<>(name, domain));
         indexesOfVarsToGo.add(variables.size() - 1);
