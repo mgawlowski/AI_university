@@ -12,13 +12,20 @@ public class QueenCSP {
 
     }
 
-    public void run(int boardSize) {
+    //method: 1 - backtracking; 2 - forward-checking
+    //heuristic: 1 - random; 2 - lowest cardinality
+    public void run(int boardSize, int method, int heuristic) {
         this.boardSize = boardSize;
         problemObj = new ProblemObject();
         populateProblemObject();
         iterations = 0;
         reverts = 0;
-        forwardChecking();
+        if(method == 1){
+            backtracking(heuristic);
+        }
+        else{
+            forwardChecking(heuristic);
+        }
         printSolution();
     }
 
@@ -32,10 +39,16 @@ public class QueenCSP {
         }
     }
 
-    private void forwardChecking() {
+    private void forwardChecking(int heuristic) {
         while (!problemObj.getVariablesIndToGo().isEmpty()) {
             iterations++;
-            int chosenIndex = getRandomVariableIndex();
+            int chosenIndex;
+            if(heuristic == 1) {
+                chosenIndex = getRandomVariableIndex();
+            }
+            else {
+                chosenIndex = getVariableIndexWithLowestCardinality();
+            }
             int chosenValue = getRandomValue(chosenIndex);
             problemObj.chooseValue(chosenIndex, chosenValue);
 
@@ -61,16 +74,72 @@ public class QueenCSP {
         }
     }
 
+    private void backtracking(int heuristic){
+
+        while (!problemObj.getVariablesIndToGo().isEmpty()) {
+            iterations++;
+            int chosenIndex = getRandomVariableIndex();
+            int chosenValue = getRandomValue(chosenIndex);
+            problemObj.chooseValue(chosenIndex, chosenValue);
+
+            while (problemObj.isAnyDomainEmpty() || !areConstraintsFulfilled()){
+                problemObj.revert();
+                reverts++;
+            }
+        }
+    }
+
+    private boolean areConstraintsFulfilled() {
+        Map<Integer, Integer> chosenValues = problemObj.getChosenValues();
+        for (int i = 0; i < boardSize; i++) {
+            if(chosenValues.get(i) != null){
+                int difference = 1;
+                for (int j = i + 1; j < problemObj.getVariablesNumber(); j++) {
+                    if(chosenValues.get(j) != null){
+                        int firstValue = chosenValues.get(i);
+                        int secondValue = chosenValues.get(j);
+                        if(firstValue == secondValue - difference ||
+                                firstValue == secondValue ||
+                                firstValue == secondValue + difference){
+                            return false;
+                        }
+                    }
+                    difference++;
+                }
+            }
+        }
+        return true;
+    }
+
     private int getRandomVariableIndex() {
         Set<Integer> varsIndexes = problemObj.getVariablesIndToGo();
         int draw = rnd.random(varsIndexes.size());
         int i = 0;
-        for (Object o : varsIndexes) {
-            if (i == draw)
-                return (int) o;
+        for (Integer integer : varsIndexes) {
+            if (i == draw) {
+                return integer;
+            }
             i++;
         }
         return -1;
+    }
+
+    private int getVariableIndexWithLowestCardinality(){
+        Set<Integer> varsIndexes = problemObj.getVariablesIndToGo();
+        List<Integer> indexesToConsider = new ArrayList<>();
+        int minDomainCount = Integer.MAX_VALUE;
+        for (Integer i : varsIndexes) {
+            int domainSize = problemObj.getDomain(i).size();
+            if (domainSize < minDomainCount){
+                minDomainCount = domainSize;
+                indexesToConsider.clear();
+                indexesToConsider.add(i);
+            }
+            else if (domainSize == minDomainCount){
+                indexesToConsider.add(i);
+            }
+        }
+        return indexesToConsider.get(rnd.random(indexesToConsider.size()));
     }
 
     private int getRandomValue(int chosenIndex) {

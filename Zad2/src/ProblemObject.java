@@ -39,6 +39,10 @@ public class ProblemObject {
         return chosenValues.get(index);
     }
 
+    public Map<Integer, Integer> getChosenValues(){
+        return chosenValues;
+    }
+
     public List<Integer> getDomain(int index) {
         return variables.get(index).getValue();
     }
