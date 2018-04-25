@@ -1,44 +1,36 @@
 public class Field {
 
-    private final int x;
-    private final int y;
-    private char owner;
+    private final int row;
+    private final int column;
+    private char takenBy;
 
-    public Field(int x, int y) {
-        this.x = x;
-        this.y = y;
-        owner = '.';
+    public Field(int row, int column) {
+        this.row = row;
+        this.column = column;
+        takenBy = '.';
     }
 
-    public int getX() {
-        return x;
+    public char getTakenBy() {
+        return takenBy;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public char getOwner() {
-        return owner;
-    }
-
-    public void setOwner(char owner) {
-        this.owner = owner;
+    public void setTakenBy(char takenBy) {
+        this.takenBy = takenBy;
     }
 
     public String toString() {
-        return String.valueOf(owner);
+        return "(" + row + ", " + column + ")";
     }
 
-    public boolean equals(int x, int y) {
-        return this.x == x && this.y == y;
+    public boolean equals(int row, int column) {
+        return this.row == row && this.column == column;
     }
 
     public boolean equals(Object o) {
-        return this.x == ((Field)o).x && this.y == ((Field)o).y;
+        return this.row == ((Field) o).row && this.column == ((Field) o).column;
     }
 
     public int hashCode() {
-        return x * 1000 + y;
+        return row * 1000 + column;
     }
 }

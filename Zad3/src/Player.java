@@ -2,73 +2,62 @@ import java.util.List;
 
 public abstract class Player {
 
-    //todo not public
-    public RandomGenerator rnd;
-    private String name;
-    private int points = 0;
+    private RandomGenerator rnd;
     private int boardSize;
 
-    public Player(RandomGenerator rnd, String name, int boardSize) {
-        this.rnd = rnd;
+    private String name;
+    private char indicator;
+    private int points = 0;
+
+
+    public Player(String name, char indicator, int boardSize, RandomGenerator rnd) {
         this.name = name;
+        this.indicator = indicator;
         this.boardSize = boardSize;
+        this.rnd = rnd;
     }
 
-    public int getPoints() {
-        return points;
+    public RandomGenerator getRnd() {
+        return rnd;
     }
 
     public String getName() {
         return name;
     }
 
-    public void addPoints(int points){
-        //todo ogarnac punkty
-        this.points += points;
+    public int getPoints() {
+        return points;
     }
 
-    public int evaluateMove(Field move, List<Field> takenFields){
-        int x = move.getX();
-        int y = move.getY();
-        int point = 0;
-        boolean emptyField;
+    abstract int chooseMove(List<Field> freeFields, List<Line> scoringLines);
 
-        // -
-        emptyField = false;
-        for (int i = x+1; i < boardSize && !emptyField; i++) {
-            if(!takenFields.contains(new Field(i,y))){
-                emptyField = true;
+    public void move(List<Field> takenFields, List<Field> freeFields, List<Line> scoringLines) {
+        Field chosenField = freeFields.remove(chooseMove(freeFields, scoringLines));
+        chosenField.setTakenBy(indicator);
+
+        int pointsGained = 0;
+        int currentPoints;
+        for (int i = 0; i < scoringLines.size(); i++) {
+            currentPoints = scoringLines.get(i).makeMove(chosenField);
+            if(currentPoints != 0){
+                scoringLines.remove(i);
             }
+            pointsGained += currentPoints;
         }
-        for (int i = x-1; i >=0 && !emptyField; i--) {
-            if(!takenFields.contains(new Field(i,y))){
-                emptyField = true;
-            }
-        }
-        if(!emptyField){
-            point += boardSize;
-        }
+        points += pointsGained;
 
-        // |
-        emptyField = false;
-        for (int i = y+1; i < boardSize && !emptyField; i++) {
-            if(!takenFields.contains(new Field(x,i))){
-                emptyField = true;
-            }
-        }
-        for (int i = y-1; i >=0 && !emptyField; i--) {
-            if(!takenFields.contains(new Field(x,i))){
-                emptyField = true;
-            }
-        }
-        if(!emptyField){
-            point += boardSize;
-        }
-
-
-
-        return point;
+        takenFields.add(chosenField);
     }
 
-    abstract int makeMove(List<Field> takenFields, List<Field> freeFields);
+    public int evaluateMove(Field move, List<Line> scoringLines) {
+        int pointsToGain = 0;
+        for (Line line : scoringLines) {
+            pointsToGain += line.movePoints(move);
+        }
+        return pointsToGain;
+    }
+
+    public String toString() {
+        return name + " - " + indicator;
+    }
 }
