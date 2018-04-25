@@ -12,10 +12,6 @@ public class Line {
         takenFields = 0;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void add(Field field) {
         fields.add(field);
     }
@@ -40,10 +36,10 @@ public class Line {
     }
 
     public String toString() {
-        String text = name + ": ";
+        StringBuilder text = new StringBuilder(name + ": ");
         for (Field f : fields) {
-            text += f;
+            text.append(f);
         }
-        return text;
+        return text.toString();
     }
 }

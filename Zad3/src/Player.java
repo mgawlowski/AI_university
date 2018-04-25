@@ -3,17 +3,15 @@ import java.util.List;
 public abstract class Player {
 
     private RandomGenerator rnd;
-    private int boardSize;
 
     private String name;
     private char indicator;
     private int points = 0;
 
 
-    public Player(String name, char indicator, int boardSize, RandomGenerator rnd) {
+    public Player(String name, char indicator, RandomGenerator rnd) {
         this.name = name;
         this.indicator = indicator;
-        this.boardSize = boardSize;
         this.rnd = rnd;
     }
 

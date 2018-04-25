@@ -27,6 +27,9 @@ public class Field {
     }
 
     public boolean equals(Object o) {
+        if (!(o instanceof Field)) {
+            return false;
+        }
         return this.row == ((Field) o).row && this.column == ((Field) o).column;
     }
 

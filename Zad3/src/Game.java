@@ -131,24 +131,19 @@ public class Game {
             }
             scoringLines.add(newLine);
         }
-
-        //todo del
-//        for (Line l: scoringLines) {
-//            System.out.println(l);
-//        }
     }
 
     private void initializePlayers(int playerAType, int playerBType) {
         if (playerAType == 0) {
-            playerA = new RandomSearchPlayer("RandomSearchA", PLAYER_A_INDICATOR, boardSize, rnd);
+            playerA = new RandomSearchPlayer("RandomSearchA", PLAYER_A_INDICATOR, rnd);
         } else {
-            playerA = new BruteForcePlayer("BruteForceA", PLAYER_A_INDICATOR, boardSize, rnd);
+            playerA = new BruteForcePlayer("BruteForceA", PLAYER_A_INDICATOR, rnd);
         }
 
         if (playerBType == 0) {
-            playerB = new RandomSearchPlayer("RandomSearchB", PLAYER_B_INDICATOR, boardSize, rnd);
+            playerB = new RandomSearchPlayer("RandomSearchB", PLAYER_B_INDICATOR, rnd);
         } else {
-            playerB = new BruteForcePlayer("BruteForceB", PLAYER_B_INDICATOR, boardSize, rnd);
+            playerB = new BruteForcePlayer("BruteForceB", PLAYER_B_INDICATOR, rnd);
         }
     }
 

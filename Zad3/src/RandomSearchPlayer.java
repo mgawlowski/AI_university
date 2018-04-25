@@ -2,8 +2,8 @@ import java.util.List;
 
 public class RandomSearchPlayer extends Player {
 
-    public RandomSearchPlayer(String name, char indicator, int boardSize, RandomGenerator rnd) {
-        super(name, indicator, boardSize, rnd);
+    public RandomSearchPlayer(String name, char indicator, RandomGenerator rnd) {
+        super(name, indicator, rnd);
     }
 
     @Override
