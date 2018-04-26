@@ -1,7 +1,7 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class Individual implements Comparable<Individual> {
 
     private List<Integer> genesList = new ArrayList<>();

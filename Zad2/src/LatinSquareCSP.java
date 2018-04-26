@@ -1,6 +1,6 @@
 import java.util.*;
 
-@SuppressWarnings("Duplicates")
+@SuppressWarnings({"Duplicates", "unused", "WeakerAccess"})
 public class LatinSquareCSP {
 
     private ProblemObject problemObj;
@@ -26,7 +26,8 @@ public class LatinSquareCSP {
         } else {
             forwardChecking(heuristic);
         }
-        printSolution();
+//        printSolution();
+        System.out.println("Iterations: " + iterations + " Reverts: " + reverts);
     }
 
     private void populateProblemObject() {
@@ -161,45 +162,49 @@ public class LatinSquareCSP {
             System.out.println();
             System.out.println();
         }
-        System.out.println("Iterations: " + iterations + " Reverts: " + reverts);
     }
 
     public void runRandom(int boardSize) {
-        List<Integer> queenPosList = new ArrayList<>();
         this.boardSize = boardSize;
-        for (int i = 0; i < boardSize; i++) {
-            queenPosList.add(i);
-        }
-
-        iterations = 0;
+        int[][] board;
+        int iterations = 0;
         do {
-            Collections.shuffle(queenPosList, rnd.getRandomEngine());
+            board = new int[boardSize][boardSize];
+            List<Integer> numbersToAttach = new ArrayList<>();
+            int indexOfNumber;
+            for (int row = 0; row < boardSize; row++) {
+                for (int i = 0; i < boardSize; i++) {
+                    numbersToAttach.add(i);
+                }
+                for (int col = 0; col < boardSize; col++) {
+                    indexOfNumber = rnd.random(numbersToAttach.size());
+                    board[row][col] = numbersToAttach.remove(indexOfNumber);
+                }
+            }
             iterations++;
-        } while (!checkIfValidRandom(queenPosList));
+        } while (!isRandomValid(board));
 
-        for (int i = 0; i < boardSize; i++) {
-            System.out.print(queenPosList.get(i) + ", ");
+        for (int row = 0; row < boardSize; row++) {
+            for (int col = 0; col < boardSize; col++) {
+                System.out.print("   " + board[row][col]);
+            }
+            System.out.print("\n\n");
         }
-        System.out.print(" (iterations: " + iterations + ")\n");
+        System.out.println("Iterations: " + iterations);
     }
 
-    private boolean checkIfValidRandom(List<Integer> queenPosList) {
-        int firstQueenPos, secondQueenPos, diagonalDifference;
+    private boolean isRandomValid(int[][] board) {
+        List<Integer> currentLineNumbers = new ArrayList<>();
 
-        for (int i = 0; i < boardSize; i++) {
-            firstQueenPos = queenPosList.get(i);
-            diagonalDifference = 1;
-            for (int j = i + 1; j < boardSize; j++) {
-                secondQueenPos = queenPosList.get(j);
-                if (firstQueenPos - diagonalDifference == secondQueenPos
-                        || firstQueenPos + diagonalDifference == secondQueenPos
-                        || firstQueenPos == secondQueenPos) {
+        for (int col = 0; col < boardSize; col++) {
+            currentLineNumbers.clear();
+            for (int row = 0; row < boardSize; row++) {
+                if (currentLineNumbers.contains(board[row][col])) {
                     return false;
                 }
-                diagonalDifference++;
+                currentLineNumbers.add(board[row][col]);
             }
         }
-
         return true;
     }
 }

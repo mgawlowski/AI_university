@@ -1,5 +1,6 @@
 import java.util.Random;
 
+@SuppressWarnings("WeakerAccess")
 public class RandomNumbers {
 
     private final Random random;

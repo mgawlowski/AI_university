@@ -2,6 +2,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class GeneticAlgorithm {
 
     private RandomNumbers rnd = new RandomNumbers();

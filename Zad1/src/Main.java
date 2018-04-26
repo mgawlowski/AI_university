@@ -1,9 +1,7 @@
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 public class Main {
 
 
+    @SuppressWarnings("unused")
     public static void main(String args[]) {
         GeneticAlgorithm ga = new GeneticAlgorithm();
         RandomSearch rs = new RandomSearch();

@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 
+@SuppressWarnings("WeakerAccess")
 public class Constants {
 
     private static final String CONFIG_FILENAME = "constants.txt";

@@ -1,5 +1,6 @@
 import java.util.*;
 
+@SuppressWarnings({"Duplicates", "unused", "WeakerAccess"})
 public class QueenCSP {
 
     private ProblemObject problemObj;
@@ -26,7 +27,8 @@ public class QueenCSP {
         else{
             forwardChecking(heuristic);
         }
-        printSolution();
+//        printSolution();
+        System.out.println("Iterations: " + iterations + " Reverts: " + reverts);
     }
 
     private void populateProblemObject() {
@@ -166,7 +168,6 @@ public class QueenCSP {
             System.out.println();
             System.out.println();
         }
-        System.out.println("Iterations: " + iterations + " Reverts: " + reverts);
     }
 
     public void runRandom(int boardSize) {
