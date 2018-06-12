@@ -2,19 +2,10 @@ import java.util.*;
 
 public class Game {
 
-    private static final char PLAYER_A_INDICATOR = 'X';
-    private static final char PLAYER_B_INDICATOR = 'O';
-    private static final String HORIZONTAL_LINE_NAME = "horizontal-";
-    private static final String VERTICAL_LINE_NAME = "vertical-";
-    private static final String DIAGONAL_UP_NAME = "diagonal(up)-";
-    private static final String DIAGONAL_DOWN_NAME = "diagonal(down)-";
-    private static final String LEFT_SIDE = "L";
-    private static final String RIGHT_SIDE = "R";
-
-
-    private RandomGenerator rnd; //todo seed
-    private Player playerA; //todo think about attaching players at Main
+    private RandomGenerator rnd;
+    private Player playerA;
     private Player playerB;
+    private Player currentPlayer;
 
     private int boardSize;
     private List<Field> takenFields;
@@ -31,21 +22,61 @@ public class Game {
         rnd = new RandomGenerator();
     }
 
-    public void run(int playerAType, int playerBType) {
-        initializeBoard();
-        initializePlayers(playerAType, playerBType);
+    public void runMatch(int playerAType, int playerBType) {
+        playerA = buildPlayer(playerAType, Constants.PLAYER_A_INDICATOR, rnd);
+        playerB = buildPlayer(playerBType, Constants.PLAYER_B_INDICATOR, rnd);
 
-        currentMove = 1;
-        while (freeFields.size() != 0) {
-            if (currentMove % 2 == 0) {
-                playerA.move(takenFields, freeFields, scoringLines);
-            } else {
-                playerB.move(takenFields, freeFields, scoringLines);
+        match(playerA);
+    }
+
+    public void runGame(int playerAType, int playerBType) {
+        playerA = buildPlayer(playerAType, Constants.PLAYER_A_INDICATOR, rnd);
+        playerB = buildPlayer(playerBType, Constants.PLAYER_B_INDICATOR, rnd);
+        Player winner;
+        int playerAWinsCount = 0;
+        int playerBWinsCount = 0;
+
+        for (int i = 0; i < 6; i++) {
+            winner = match(i < 3 ? playerA : playerB);
+            if (winner == playerA) {
+                playerAWinsCount++;
             }
-            printBoard();
+            if (winner == playerB) {
+                playerBWinsCount++;
+            }
+        }
+        System.out.println("GAME SCORE - " + playerA.getName() + "(A) " + playerAWinsCount
+                + " : " + playerBWinsCount + " " + playerB.getName() + "(B)");
+    }
+
+    private Player match(Player startingPlayer) {
+        initializeBoard();
+        currentMove = 1;
+        currentPlayer = startingPlayer;
+        while (freeFields.size() != 0) {
+            currentPlayer.move(takenFields, freeFields, scoringLines);
+
+//            printStateAndMove();
+
+            switchPlayers();
             currentMove++;
         }
-//        printBoard();
+        printScore();
+
+        if (playerA.getPoints() > playerB.getPoints()) {
+            return playerA;
+        } else if (playerA.getPoints() < playerB.getPoints()) {
+            return playerB;
+        }
+        return null;
+    }
+
+    private void switchPlayers() {
+        if (currentPlayer == playerA) {
+            currentPlayer = playerB;
+        } else {
+            currentPlayer = playerA;
+        }
     }
 
     @SuppressWarnings("Duplicates")
@@ -64,7 +95,7 @@ public class Game {
 
         //populating horizontal lines
         for (int row = 0; row < boardSize; row++) {
-            newLine = new Line(HORIZONTAL_LINE_NAME + row);
+            newLine = new Line(Constants.HORIZONTAL_LINE_NAME + row);
             for (int col = 0; col < boardSize; col++) {
                 newLine.add(new Field(row, col));
             }
@@ -73,7 +104,7 @@ public class Game {
 
         //populating vertical lines
         for (int col = 0; col < boardSize; col++) {
-            newLine = new Line(VERTICAL_LINE_NAME + col);
+            newLine = new Line(Constants.VERTICAL_LINE_NAME + col);
             for (int row = 0; row < boardSize; row++) {
                 newLine.add(new Field(row, col));
             }
@@ -82,7 +113,7 @@ public class Game {
 
         //populating diagonals (left down)
         for (int i = 0; i < boardSize - 1; i++) {
-            newLine = new Line(DIAGONAL_DOWN_NAME + i + LEFT_SIDE);
+            newLine = new Line(Constants.DIAGONAL_DOWN_NAME + i + Constants.LEFT_SIDE);
             int row = i;
             int col = 0;
             while (row < boardSize && col < boardSize) {
@@ -95,7 +126,7 @@ public class Game {
 
         //populating diagonals (left up)
         for (int i = 1; i < boardSize; i++) {
-            newLine = new Line(DIAGONAL_UP_NAME + i + LEFT_SIDE);
+            newLine = new Line(Constants.DIAGONAL_UP_NAME + i + Constants.LEFT_SIDE);
             int row = i;
             int col = 0;
             while (row >= 0 && col < boardSize) {
@@ -108,7 +139,7 @@ public class Game {
 
         //populating diagonals (right down)
         for (int i = 1; i < boardSize - 1; i++) {
-            newLine = new Line(DIAGONAL_DOWN_NAME + i + RIGHT_SIDE);
+            newLine = new Line(Constants.DIAGONAL_DOWN_NAME + i + Constants.RIGHT_SIDE);
             int row = i;
             int col = boardSize - 1;
             while (row < boardSize && col >= 0) {
@@ -121,7 +152,7 @@ public class Game {
 
         //populating diagonals (right up)
         for (int i = 1; i < boardSize - 1; i++) {
-            newLine = new Line(DIAGONAL_UP_NAME + i + RIGHT_SIDE);
+            newLine = new Line(Constants.DIAGONAL_UP_NAME + i + Constants.RIGHT_SIDE);
             int row = i;
             int col = boardSize - 1;
             while (row >= 0 && col >= 0) {
@@ -133,21 +164,19 @@ public class Game {
         }
     }
 
-    private void initializePlayers(int playerAType, int playerBType) {
-        if (playerAType == 0) {
-            playerA = new RandomSearchPlayer("RandomSearchA", PLAYER_A_INDICATOR, rnd);
+    private Player buildPlayer(int playerType, char indicator, RandomGenerator rnd) {
+        if (playerType == 0) {
+            return new RandomSearchPlayer("RandomSearch", indicator, rnd);
         } else {
-            playerA = new BruteForcePlayer("BruteForceA", PLAYER_A_INDICATOR, rnd);
-        }
-
-        if (playerBType == 0) {
-            playerB = new RandomSearchPlayer("RandomSearchB", PLAYER_B_INDICATOR, rnd);
-        } else {
-            playerB = new BruteForcePlayer("BruteForceB", PLAYER_B_INDICATOR, rnd);
+            return new BruteForcePlayer("BruteForce", indicator, rnd);
         }
     }
 
-    private void printBoard() {
+    private void printStateAndMove() {
+        System.out.println("Move " + currentMove + " (" + currentPlayer + ")");
+        printScore();
+        System.out.println();
+
         char fieldChar;
         boolean found;
         for (int row = 0; row < boardSize; row++) {
@@ -160,13 +189,15 @@ public class Game {
                         found = true;
                     }
                 }
-                System.out.print("   " + fieldChar);
+                System.out.print(" " + fieldChar);
             }
-            System.out.print("\n\n");
+            System.out.println();
         }
-        System.out.println("Move " + currentMove + " (" + (currentMove % 2 == 0 ? playerA : playerB) + ")");
-        System.out.println(playerA.getName() + " " + playerA.getPoints()
-                + " : " + playerB.getPoints() + " " + playerB.getName());
         System.out.println("\n-------------------------\n");
+    }
+
+    private void printScore() {
+        System.out.println(playerA.getName() + "(A) " + playerA.getPoints()
+                + " : " + playerB.getPoints() + " " + playerB.getName() + "(B)");
     }
 }

@@ -6,8 +6,8 @@ public class RandomGenerator {
 
     public RandomGenerator() {
         random = new Random();
-//        if(Constants.USE_SEED)
-//            random.setSeed(Constants.SEED);
+        if(Constants.USE_SEED)
+            random.setSeed(Constants.SEED);
     }
 
     public int random(int i){

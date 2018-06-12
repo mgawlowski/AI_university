@@ -38,8 +38,9 @@ public class Line {
     public String toString() {
         StringBuilder text = new StringBuilder(name + ": ");
         for (Field f : fields) {
-            text.append(f);
+            text.append(f).append(" ");
         }
+        text.append("= ").append(takenFields).append(" / ").append(fields.size());
         return text.toString();
     }
 }

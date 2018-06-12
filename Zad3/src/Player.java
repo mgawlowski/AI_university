@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Stack;
 
 public abstract class Player {
 
@@ -7,12 +8,14 @@ public abstract class Player {
     private String name;
     private char indicator;
     private int points = 0;
+    private Stack<Integer> indexStack;
 
 
     public Player(String name, char indicator, RandomGenerator rnd) {
         this.name = name;
         this.indicator = indicator;
         this.rnd = rnd;
+        indexStack = new Stack<>();
     }
 
     public RandomGenerator getRnd() {
@@ -37,10 +40,13 @@ public abstract class Player {
         int currentPoints;
         for (int i = 0; i < scoringLines.size(); i++) {
             currentPoints = scoringLines.get(i).makeMove(chosenField);
-            if(currentPoints != 0){
-                scoringLines.remove(i);
+            if (currentPoints != 0) {
+                indexStack.push(i);
             }
             pointsGained += currentPoints;
+        }
+        while (!indexStack.empty()) {
+            scoringLines.remove((int) indexStack.pop());
         }
         points += pointsGained;
 
