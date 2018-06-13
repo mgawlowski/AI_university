@@ -1,4 +1,4 @@
-import java.util.*;
+import java.util.ArrayList;
 
 public class Game {
 
@@ -8,9 +8,9 @@ public class Game {
     private Player currentPlayer;
 
     private int boardSize;
-    private List<Field> takenFields;
-    private List<Field> freeFields;
-    private List<Line> scoringLines;
+    private ArrayList<Field> takenFields;
+    private ArrayList<Field> freeFields;
+    private ArrayList<Line> scoringLines;
     private int currentMove;
 
 
@@ -51,6 +51,8 @@ public class Game {
 
     private Player match(Player startingPlayer) {
         initializeBoard();
+        playerA.resetPoints();
+        playerB.resetPoints();
         currentMove = 1;
         currentPlayer = startingPlayer;
         while (freeFields.size() != 0) {
@@ -167,8 +169,16 @@ public class Game {
     private Player buildPlayer(int playerType, char indicator, RandomGenerator rnd) {
         if (playerType == 0) {
             return new RandomSearchPlayer("RandomSearch", indicator, rnd);
-        } else {
+        } else if (playerType == 1) {
             return new BruteForcePlayer("BruteForce", indicator, rnd);
+        } else if (playerType == 2) {
+            return new MinMaxPlayer("MinMax5", 5, indicator, rnd);
+        } else if (playerType == 3) {
+            return new MinMaxPlayer("MinMax10", 10, indicator, rnd);
+        } else if (playerType == 4) {
+            return new MinMaxPlayer("MinMax15", 15, indicator, rnd);
+        } else {
+            return null;
         }
     }
 

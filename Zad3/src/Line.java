@@ -12,8 +12,25 @@ public class Line {
         takenFields = 0;
     }
 
+    public Line(Line line) {
+        this.name = line.name;
+        fields = new HashSet<>();
+        for (Field field : fields) {
+            fields.add(new Field(field));
+        }
+        this.takenFields = line.takenFields;
+    }
+
     public void add(Field field) {
         fields.add(field);
+    }
+
+    public boolean isScorable(){
+        return fields.size() == takenFields + 1;
+    }
+
+    public boolean isScorableInXMoves(int xMoves){
+        return fields.size() <= takenFields + xMoves;
     }
 
     public int movePoints(Field fieldToCheck) {

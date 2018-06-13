@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Stack;
 
 public abstract class Player {
@@ -30,12 +30,20 @@ public abstract class Player {
         return points;
     }
 
-    abstract int chooseMove(List<Field> freeFields, List<Line> scoringLines);
+    public void resetPoints() {
+        points = 0;
+    }
 
-    public void move(List<Field> takenFields, List<Field> freeFields, List<Line> scoringLines) {
+    public void move(ArrayList<Field> takenFields, ArrayList<Field> freeFields, ArrayList<Line> scoringLines) {
         Field chosenField = freeFields.remove(chooseMove(freeFields, scoringLines));
         chosenField.setTakenBy(indicator);
 
+        points += applyMove(chosenField, scoringLines);
+
+        takenFields.add(chosenField);
+    }
+
+    protected int applyMove(Field chosenField, ArrayList<Line> scoringLines) {
         int pointsGained = 0;
         int currentPoints;
         for (int i = 0; i < scoringLines.size(); i++) {
@@ -48,12 +56,10 @@ public abstract class Player {
         while (!indexStack.empty()) {
             scoringLines.remove((int) indexStack.pop());
         }
-        points += pointsGained;
-
-        takenFields.add(chosenField);
+        return pointsGained;
     }
 
-    public int evaluateMove(Field move, List<Line> scoringLines) {
+    protected int evaluateMove(Field move, ArrayList<Line> scoringLines) {
         int pointsToGain = 0;
         for (Line line : scoringLines) {
             pointsToGain += line.movePoints(move);
@@ -64,4 +70,6 @@ public abstract class Player {
     public String toString() {
         return name + " - " + indicator;
     }
+
+    public abstract int chooseMove(ArrayList<Field> freeFields, ArrayList<Line> scoringLines);
 }

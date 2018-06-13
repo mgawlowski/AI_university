@@ -10,6 +10,12 @@ public class Field {
         takenBy = '.';
     }
 
+    public Field(Field field) {
+        this.row = field.row;
+        this.column = field.column;
+        this.takenBy = field.takenBy;
+    }
+
     public char getTakenBy() {
         return takenBy;
     }

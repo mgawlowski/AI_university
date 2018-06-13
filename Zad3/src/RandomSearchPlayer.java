@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public class RandomSearchPlayer extends Player {
 
@@ -7,7 +7,7 @@ public class RandomSearchPlayer extends Player {
     }
 
     @Override
-    public int chooseMove(List<Field> freeFields, List<Line> scoringLines) {
+    public int chooseMove(ArrayList<Field> freeFields, ArrayList<Line> scoringLines) {
         return getRnd().random(freeFields.size());
     }
 }

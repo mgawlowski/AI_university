@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 
 public class BruteForcePlayer extends Player {
 
@@ -7,11 +7,17 @@ public class BruteForcePlayer extends Player {
     }
 
     @Override
-    int chooseMove(List<Field> freeFields, List<Line> scoringLines) {
+    public int chooseMove(ArrayList<Field> freeFields, ArrayList<Line> scoringLines) {
         int bestPointsGain = 0;
         int indexToTake = 0;
+        ArrayList<Line> scorableLines = new ArrayList<>();
+        for (Line line : scoringLines) {
+            if (line.isScorable()) {
+                scorableLines.add(line);
+            }
+        }
         for (int i = 0; i < freeFields.size(); i++) {
-            int currentPoints = evaluateMove(freeFields.get(i), scoringLines);
+            int currentPoints = evaluateMove(freeFields.get(i), scorableLines);
             if (currentPoints > bestPointsGain) {
                 bestPointsGain = currentPoints;
                 indexToTake = i;
