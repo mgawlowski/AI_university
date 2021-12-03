@@ -1,5 +1,4 @@
-# SI
-Artificial Intelligence course on University
+Artificial Intelligence course on Wrocław University of Science and Technology
 
 Zad1 - genetic algorithm for quadratic assignment problem (QAP) 
 
